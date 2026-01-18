@@ -43,19 +43,21 @@ src/
 ## 開発コマンド
 
 ```bash
-npm install          # 依存関係インストール
-npm run dev          # 開発モード（ホットリロード）
-npm run build        # 本番ビルド
-npm run lint         # ESLint 実行
-npm run type-check   # TypeScript 型チェック
+yarn install         # 依存関係インストール
+yarn dev             # 開発モード（ホットリロード）
+yarn build           # 本番ビルド
+yarn lint            # ESLint 実行
+yarn type-check      # TypeScript 型チェック
 ```
 
-## 環境変数
+## API キーの管理
 
-`.env` ファイルで管理（`.env.example` を参照）:
+環境変数ではなく、**拡張機能の初回起動時にポップアップで入力**させる方式:
 
 - `OPENAI_API_KEY`: OpenAI API キー
 - `SLACK_WEBHOOK_URL`: Slack Incoming Webhook URL
+
+入力された値は `chrome.storage.local` に保存し、以降は自動で読み込む。
 
 ## コーディング規約
 
