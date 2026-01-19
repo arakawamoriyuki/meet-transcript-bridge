@@ -5,31 +5,33 @@
         Meet Transcript Bridge
       </h1>
       <p class="text-sm leading-relaxed mb-2">
-        Hello World with Vue 3! 🎉
+        Hello World with Vue 3 + Pinia! 🎉
       </p>
       <p class="text-xs opacity-80 mt-4">
-        Version {{ version }}
+        Version {{ appStore.version }}
       </p>
       <div class="mt-4 text-xs opacity-60">
         <p>Vue: {{ vueVersion }}</p>
-        <p>Chrome API: {{ chromeApiAvailable ? '✅' : '❌' }}</p>
+        <p>Chrome API: {{ appStore.chromeApiAvailable ? '✅' : '❌' }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { version as vueVersion } from 'vue';
+import { useAppStore } from '@/stores/app';
 
-const version = ref('0.1.0');
-const chromeApiAvailable = ref(false);
+const appStore = useAppStore();
 
 onMounted(() => {
-  // Chrome Extension API の動作確認
-  if (chrome?.storage) {
-    chromeApiAvailable.value = true;
-    console.log('Chrome Extension API is available');
+  // Chrome Extension API をチェック
+  appStore.checkChromeApi();
+
+  // 設定を読み込み
+  if (appStore.chromeApiAvailable) {
+    appStore.loadSettings();
   }
 });
 </script>
