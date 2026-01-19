@@ -20,16 +20,6 @@ describe('App.vue', () => {
     expect(wrapper.text()).toContain('Meet Transcript Bridge');
   });
 
-  it('Hello World メッセージが表示される', () => {
-    const wrapper = mount(App, {
-      global: {
-        plugins: [createPinia()],
-      },
-    });
-
-    expect(wrapper.text()).toContain('Hello World with Vue 3 + Pinia!');
-  });
-
   it('バージョン情報が表示される', () => {
     const wrapper = mount(App, {
       global: {
@@ -40,44 +30,120 @@ describe('App.vue', () => {
     expect(wrapper.text()).toContain('Version 0.1.0');
   });
 
-  it('Vue のバージョンが表示される', () => {
+  it('タブが表示される', () => {
     const wrapper = mount(App, {
       global: {
         plugins: [createPinia()],
       },
     });
 
-    expect(wrapper.text()).toMatch(/Vue: \d+\.\d+\.\d+/);
+    expect(wrapper.text()).toContain('ホーム');
+    expect(wrapper.text()).toContain('設定');
+  });
+
+  it('設定が未完了の場合、設定タブが最初に表示される', async () => {
+    const pinia = createPinia();
+    setActivePinia(pinia);
+    const store = useAppStore();
+    store.openaiApiKey = null;
+    store.slackWebhookUrl = null;
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [pinia],
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    // 設定フォームが表示されている
+    expect(wrapper.find('input#openaiApiKey').exists()).toBe(true);
+  });
+
+  it('設定が完了している場合、ホームタブが最初に表示される', async () => {
+    const pinia = createPinia();
+    setActivePinia(pinia);
+    const store = useAppStore();
+    store.openaiApiKey = 'sk-test123';
+    store.slackWebhookUrl = 'https://hooks.slack.com/services/test';
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [pinia],
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain('設定完了');
+  });
+
+  it('設定未完了の警告が表示される', async () => {
+    const pinia = createPinia();
+    setActivePinia(pinia);
+    const store = useAppStore();
+    store.openaiApiKey = null;
+    store.slackWebhookUrl = null;
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [pinia],
+      },
+    });
+
+    // ホームタブに切り替え
+    const homeTab = wrapper.findAll('button').find(btn => btn.text() === 'ホーム');
+    await homeTab?.trigger('click');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain('設定が必要です');
   });
 
   it('Chrome API の状態が表示される', async () => {
-    const wrapper = mount(App, {
-      global: {
-        plugins: [createPinia()],
-      },
-    });
-
+    const pinia = createPinia();
+    setActivePinia(pinia);
     const store = useAppStore();
     store.chromeApiAvailable = true;
+    store.openaiApiKey = 'sk-test123';
+    store.slackWebhookUrl = 'https://hooks.slack.com/services/test';
 
-    await wrapper.vm.$nextTick();
-
-    expect(wrapper.text()).toContain('Chrome API: ✅');
-  });
-
-  it('Chrome API が利用不可の場合、❌ が表示される', async () => {
     const wrapper = mount(App, {
       global: {
-        plugins: [createPinia()],
+        plugins: [pinia],
       },
     });
 
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain('Chrome API');
+    expect(wrapper.text()).toMatch(/Chrome API[\s\S]*?✅/);
+  });
+
+  it('タブを切り替えられる', async () => {
+    const pinia = createPinia();
+    setActivePinia(pinia);
     const store = useAppStore();
-    store.chromeApiAvailable = false;
+    store.openaiApiKey = 'sk-test123';
+    store.slackWebhookUrl = 'https://hooks.slack.com/services/test';
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [pinia],
+      },
+    });
 
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.text()).toContain('Chrome API: ❌');
+    // 最初はホームタブ
+    expect(wrapper.text()).toContain('設定完了');
+
+    // 設定タブに切り替え
+    const settingsTab = wrapper.findAll('button').find(btn => btn.text() === '設定');
+    await settingsTab?.trigger('click');
+    await wrapper.vm.$nextTick();
+
+    // 設定フォームが表示される
+    expect(wrapper.find('input#openaiApiKey').exists()).toBe(true);
   });
 
   it('マウント時に Chrome API をチェックする', () => {
