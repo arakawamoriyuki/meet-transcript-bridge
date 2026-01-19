@@ -168,15 +168,77 @@ OpenAI Whisper を使うことで、より高精度な文字起こしを実現�
 - GPT に判定させる？（コスト増）
 - **要検証**: 日本語と英語で異なるロジックが必要か
 
-## TODO
+## 実装状況
 
-- [ ] Chrome Extension の基本構成（Manifest V3）
+### 完了した項目
+
+#### Phase 1: 基本セットアップ
+- [x] Chrome Extension の基本構成（Manifest V3）
+  - manifest.json
+  - popup.html（エントリーポイント）
+- [x] Vite ビルド環境の構築
+  - Chrome Extension 用のカスタムビルド設定
+  - manifest.json と HTML の自動配置
+- [x] TypeScript 設定
+  - strict モード有効化
+  - Vue ファイルの型定義サポート
+
+#### Phase 1.5: モダンなフロントエンド環境
+- [x] Vue 3 + Composition API の導入
+- [x] Tailwind CSS の導入
+- [x] Pinia による状態管理
+  - `useAppStore`: アプリ設定管理用ストア
+    - Chrome API 可用性チェック
+    - 設定の読み込み・保存（OpenAI API キー、Slack Webhook URL）
+- [x] VueUse の導入（便利な Vue hooks）
+- [x] Vitest によるテスト環境
+  - @testing-library/vue
+  - happy-dom（高速な DOM シミュレーション）
+  - Chrome API のモック
+  - 20 個のテスト（すべて成功）
+
+### 次のステップ
+
+#### Phase 2: クリーンアーキテクチャのディレクトリ構造
+- [ ] ディレクトリ構造の作成
+  - `src/domain/entities/` - エンティティ（Transcript, Meeting など）
+  - `src/domain/repositories/` - リポジトリインターフェース
+  - `src/domain/services/` - ドメインサービス（文章完成判定など）
+  - `src/application/usecases/` - ユースケース
+  - `src/infrastructure/openai/` - Whisper / GPT クライアント
+  - `src/infrastructure/slack/` - Webhook クライアント
+  - `src/infrastructure/audio/` - 音声キャプチャ処理
+  - `src/infrastructure/storage/` - chrome.storage ラッパー
+  - `src/shared/types/` - 型定義
+- [ ] 基本的な型定義の追加
+
+#### Phase 3: 設定 UI
+- [ ] ポップアップ UI の拡張（API キー入力フォーム）
+- [ ] 設定保存・読み込み機能の実装
+
+#### Phase 4: Content Script + Background
+- [ ] Content Script の実装（Google Meet ページ検出）
+- [ ] Background Service Worker の実装
+- [ ] Content ↔ Background の通信実装
+
+#### Phase 5: 音声キャプチャ
 - [ ] `chrome.tabCapture` での音声キャプチャ実装
-- [ ] Whisper API 連携
+- [ ] 音声データのチャンク分割（10秒単位）
+
+#### Phase 6: Whisper 連携
+- [ ] Whisper API クライアント実装
+- [ ] 音声 → テキスト変換の動作確認
+
+#### Phase 7: バッファリング
 - [ ] バッファリング・文章完成判定ロジック
-- [ ] GPT による翻訳・要約処理
+- [ ] バッファ管理の実装
+
+#### Phase 8: GPT + Slack
+- [ ] GPT API クライアント（翻訳・要約）
 - [ ] Slack Webhook 連携
-- [ ] ポップアップ UI（設定画面）
+- [ ] エンドツーエンドの動作確認
+
+#### その他
 - [ ] 話者分離の調査・実装（優先度: 中）
 - [ ] エラーハンドリング・リトライ処理
-- [ ] テスト
+- [ ] E2E テスト（Playwright）
