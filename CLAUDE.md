@@ -197,24 +197,39 @@ OpenAI Whisper を使うことで、より高精度な文字起こしを実現�
   - Chrome API のモック
   - 20 個のテスト（すべて成功）
 
-### 次のステップ
-
 #### Phase 2: クリーンアーキテクチャのディレクトリ構造
-- [ ] ディレクトリ構造の作成
-  - `src/domain/entities/` - エンティティ（Transcript, Meeting など）
-  - `src/domain/repositories/` - リポジトリインターフェース
-  - `src/domain/services/` - ドメインサービス（文章完成判定など）
-  - `src/application/usecases/` - ユースケース
-  - `src/infrastructure/openai/` - Whisper / GPT クライアント
-  - `src/infrastructure/slack/` - Webhook クライアント
-  - `src/infrastructure/audio/` - 音声キャプチャ処理
-  - `src/infrastructure/storage/` - chrome.storage ラッパー
+- [x] ディレクトリ構造の作成
+  - `src/domain/entities/` - エンティティ（Transcript, Meeting）
+  - `src/domain/repositories/` - リポジトリインターフェース（5つ）
+  - `src/domain/services/` - ドメインサービス（TranscriptCompletionService）
+  - `src/application/usecases/` - ユースケース（準備完了）
+  - `src/infrastructure/` - 各種クライアント（準備完了）
   - `src/shared/types/` - 型定義
-- [ ] 基本的な型定義の追加
+- [x] 基本的な型定義の追加
+  - TranscriptSegment, Meeting, AudioChunk, WhisperResponse など
+- [x] ドメインエンティティの実装
+  - `Transcript`: 文字起こしエンティティ
+  - `Meeting`: 会議エンティティ
+- [x] リポジトリインターフェースの定義
+  - `ITranscriptRepository`, `IAudioRepository`, `IWhisperRepository`
+  - `IGptRepository`, `ISlackRepository`
+- [x] ドメインサービスの実装
+  - `TranscriptCompletionService`: 文章完成判定（日本語・英語対応）
+- [x] 各レイヤーの README 追加
+- [x] テスト追加（14 個 - 累計 34 個）
 
 #### Phase 3: 設定 UI
-- [ ] ポップアップ UI の拡張（API キー入力フォーム）
-- [ ] 設定保存・読み込み機能の実装
+- [x] ポップアップ UI の拡張
+  - タブ切り替え（ホーム / 設定）
+  - 設定状態の表示（Chrome API, OpenAI API Key, Slack Webhook）
+- [x] 設定フォームコンポーネントの作成
+  - OpenAI API Key 入力（バリデーション付き）
+  - Slack Webhook URL 入力（バリデーション付き）
+  - 保存機能（ローディング状態、成功/エラーメッセージ）
+- [x] 設定未完了時の自動リダイレクト
+- [x] テスト追加（16 個 - 累計 42 個）
+
+### 次のステップ
 
 #### Phase 4: Content Script + Background
 - [ ] Content Script の実装（Google Meet ページ検出）
