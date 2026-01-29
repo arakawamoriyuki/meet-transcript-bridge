@@ -1,7 +1,7 @@
 {
-  "name": "meet-transcript-bridge",
+  "name": "stream-transcript-bridge",
   "version": "0.1.0",
-  "description": "Google Meet の音声をリアルタイムで文字起こし・要約・翻訳し、Slack に投稿する Chrome 拡張機能",
+  "description": "タブの音声をリアルタイムで文字起こし・要約・翻訳し、Slack に投稿する Chrome 拡張機能",
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
@@ -14,7 +14,8 @@
   },
   "keywords": [
     "chrome-extension",
-    "google-meet",
+    "youtube",
+    "streaming",
     "transcription",
     "openai",
     "slack"
