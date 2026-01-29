@@ -220,9 +220,7 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
 
 ## 実装状況
 
-### 完了した項目
-
-#### Phase 1: 基本セットアップ
+### Phase 1: 基本セットアップ
 - [x] Chrome Extension の基本構成（Manifest V3）
   - manifest.json
   - popup.html（エントリーポイント）
@@ -233,7 +231,7 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
   - strict モード有効化
   - Vue ファイルの型定義サポート
 
-#### Phase 1.5: モダンなフロントエンド環境
+### Phase 1.5: モダンなフロントエンド環境
 - [x] Vue 3 + Composition API の導入
 - [x] Tailwind CSS の導入
 - [x] Pinia による状態管理
@@ -247,7 +245,7 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
   - Chrome API のモック
   - 20 個のテスト（すべて成功）
 
-#### Phase 2: クリーンアーキテクチャのディレクトリ構造
+### Phase 2: クリーンアーキテクチャのディレクトリ構造
 - [x] ディレクトリ構造の作成
   - `src/domain/entities/` - エンティティ（Transcript, Meeting）
   - `src/domain/repositories/` - リポジトリインターフェース（5つ）
@@ -268,7 +266,7 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
 - [x] 各レイヤーの README 追加
 - [x] テスト追加（14 個 - 累計 34 個）
 
-#### Phase 3: 設定 UI
+### Phase 3: 設定 UI
 - [x] ポップアップ UI の拡張
   - タブ切り替え（ホーム / 設定）
   - 設定状態の表示（Chrome API, OpenAI API Key, Slack Webhook）
@@ -279,7 +277,7 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
 - [x] 設定未完了時の自動リダイレクト
 - [x] テスト追加（16 個 - 累計 42 個）
 
-#### Phase 4: Background Service Worker + Audio Capture
+### Phase 4: Background Service Worker + Audio Capture
 - [x] メッセージ型定義（`src/shared/types/messages.ts`）
   - Popup ↔ Background ↔ Offscreen 間の通信型
 - [x] Background Service Worker（`src/presentation/background/background.ts`）
@@ -307,27 +305,25 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
   - タブ音声のみでも動作は継続する
   - 対応策: Popup で先にマイク権限を取得する処理を追加する（必要になったら実装）
 
-### 次のステップ
-
-#### Phase 5: 動作確認
+### Phase 5: 動作確認
 - [ ] 拡張機能をChromeに読み込んで動作確認
 - [ ] AudioChunk が正しく生成されることを確認
 
-#### Phase 6: Whisper 連携
+### Phase 6: Whisper 連携
 - [x] Whisper API クライアント実装（`src/infrastructure/openai/WhisperClient.ts`）
 - [x] Background で AudioChunk を受け取り Whisper に送信
 - [ ] 音声 → テキスト変換の動作確認
 
-#### Phase 7: バッファリング
+### Phase 7: バッファリング
 - [ ] バッファリング・文章完成判定ロジック
 - [ ] バッファ管理の実装
 
-#### Phase 8: GPT + Slack
+### Phase 8: GPT + Slack
 - [ ] GPT API クライアント（翻訳・要約）
 - [ ] Slack Webhook 連携
 - [ ] エンドツーエンドの動作確認
 
-#### その他
+### その他
 - [ ] マイク権限の事前取得（Popup から）
 - [ ] 話者分離の調査・実装（優先度: 中）
 - [ ] エラーハンドリング・リトライ処理
