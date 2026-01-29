@@ -8,6 +8,11 @@ describe('App.vue', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
+
+    // Mock chrome.runtime.sendMessage for recording store
+    (chrome.runtime.sendMessage as ReturnType<typeof vi.fn>).mockResolvedValue({
+      isRecording: false,
+    });
   });
 
   it('タイトルが表示される', () => {
@@ -17,7 +22,7 @@ describe('App.vue', () => {
       },
     });
 
-    expect(wrapper.text()).toContain('Meet Transcript Bridge');
+    expect(wrapper.text()).toContain('Stream Transcript Bridge');
   });
 
   it('バージョン情報が表示される', () => {
@@ -54,6 +59,8 @@ describe('App.vue', () => {
       },
     });
 
+    // onMounted が完了するまで待つ
+    await new Promise((resolve) => setTimeout(resolve, 10));
     await wrapper.vm.$nextTick();
 
     // 設定フォームが表示されている
@@ -116,7 +123,7 @@ describe('App.vue', () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.text()).toContain('Chrome API');
-    expect(wrapper.text()).toMatch(/Chrome API[\s\S]*?✅/);
+    expect(wrapper.text()).toMatch(/Chrome API[\s\S]*?OK/);
   });
 
   it('タブを切り替えられる', async () => {

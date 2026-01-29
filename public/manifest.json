@@ -6,8 +6,13 @@
   "permissions": [
     "storage",
     "tabCapture",
-    "activeTab"
+    "activeTab",
+    "offscreen"
   ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
   "action": {
     "default_popup": "popup.html"
   }

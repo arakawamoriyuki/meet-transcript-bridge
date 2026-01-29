@@ -239,19 +239,43 @@ OpenAI Whisper を使うことで、より高精度な文字起こしを実現�
 - [x] 設定未完了時の自動リダイレクト
 - [x] テスト追加（16 個 - 累計 42 個）
 
+#### Phase 4: Background Service Worker + Audio Capture
+- [x] メッセージ型定義（`src/shared/types/messages.ts`）
+  - Popup ↔ Background ↔ Offscreen 間の通信型
+- [x] Background Service Worker（`src/presentation/background/background.ts`）
+  - Popup からのメッセージ処理（録音開始/停止/状態取得）
+  - `tabCapture.getMediaStreamId()` で音声ストリーム ID 取得
+  - Offscreen Document の作成・管理
+- [x] AudioMixer（`src/infrastructure/audio/AudioMixer.ts`）
+  - Web Audio API による Tab Audio + Mic Audio のミキシング
+  - MediaRecorder で 10秒チャンク分割
+- [x] Offscreen Document（`src/presentation/offscreen/`）
+  - `getUserMedia` でタブ音声キャプチャ
+  - AudioMixer を使用してチャンク生成
+  - Background に AudioChunk を送信
+- [x] Recording Store（`src/stores/recording.ts`）
+  - 録音状態管理（Pinia）
+- [x] Popup UI 更新
+  - 録音開始/停止ボタン
+  - 録音状態・経過時間の表示
+- [x] manifest.json 更新（offscreen permission, background 設定）
+- [x] vite.config.ts 更新（複数エントリーポイント対応）
+- [x] テスト維持（42 個すべて成功）
+
+**既知の課題:**
+- Offscreen Document からのマイク権限取得が失敗する場合がある
+  - タブ音声のみでも動作は継続する
+  - 対応策: Popup で先にマイク権限を取得する処理を追加する（必要になったら実装）
+
 ### 次のステップ
 
-#### Phase 4: Content Script + Background
-- [ ] Content Script の実装（対象ページ検出）
-- [ ] Background Service Worker の実装
-- [ ] Content ↔ Background の通信実装
-
-#### Phase 5: 音声キャプチャ
-- [ ] `chrome.tabCapture` での音声キャプチャ実装
-- [ ] 音声データのチャンク分割（10秒単位）
+#### Phase 5: 動作確認
+- [ ] 拡張機能をChromeに読み込んで動作確認
+- [ ] AudioChunk が正しく生成されることを確認
 
 #### Phase 6: Whisper 連携
-- [ ] Whisper API クライアント実装
+- [ ] Whisper API クライアント実装（`src/infrastructure/openai/`）
+- [ ] Background で AudioChunk を受け取り Whisper に送信
 - [ ] 音声 → テキスト変換の動作確認
 
 #### Phase 7: バッファリング
@@ -264,6 +288,7 @@ OpenAI Whisper を使うことで、より高精度な文字起こしを実現�
 - [ ] エンドツーエンドの動作確認
 
 #### その他
+- [ ] マイク権限の事前取得（Popup から）
 - [ ] 話者分離の調査・実装（優先度: 中）
 - [ ] エラーハンドリング・リトライ処理
 - [ ] E2E テスト（Playwright）

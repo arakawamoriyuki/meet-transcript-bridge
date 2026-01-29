@@ -10,6 +10,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: resolve(__dirname, 'src/presentation/popup/popup.html'),
+        background: resolve(__dirname, 'src/presentation/background/background.ts'),
+        offscreen: resolve(__dirname, 'src/presentation/offscreen/offscreen.html'),
       },
       output: {
         entryFileNames: '[name].js',
@@ -42,14 +44,20 @@ export default defineConfig({
         copyFileSync('public/manifest.json', 'dist/manifest.json');
 
         // HTML ファイルを dist 直下に移動
-        const htmlSource = 'dist/src/presentation/popup/popup.html';
-        const htmlDest = 'dist/popup.html';
-        if (existsSync(htmlSource)) {
-          renameSync(htmlSource, htmlDest);
-          // 空のディレクトリを削除
-          if (existsSync('dist/src')) {
-            rmSync('dist/src', { recursive: true, force: true });
+        const htmlFiles = [
+          { source: 'dist/src/presentation/popup/popup.html', dest: 'dist/popup.html' },
+          { source: 'dist/src/presentation/offscreen/offscreen.html', dest: 'dist/offscreen.html' },
+        ];
+
+        for (const { source, dest } of htmlFiles) {
+          if (existsSync(source)) {
+            renameSync(source, dest);
           }
+        }
+
+        // 空のディレクトリを削除
+        if (existsSync('dist/src')) {
+          rmSync('dist/src', { recursive: true, force: true });
         }
       },
     },

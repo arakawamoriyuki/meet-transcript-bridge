@@ -69,7 +69,7 @@ describe('useAppStore', () => {
         slackWebhookUrl: 'https://hooks.slack.com/test',
       };
 
-      vi.mocked(chrome.storage.local.get).mockResolvedValue(mockSettings);
+      (chrome.storage.local.get as ReturnType<typeof vi.fn>).mockResolvedValue(mockSettings);
 
       const store = useAppStore();
       store.chromeApiAvailable = true;
@@ -82,7 +82,7 @@ describe('useAppStore', () => {
     });
 
     it('設定が存在しない場合、null のまま', async () => {
-      vi.mocked(chrome.storage.local.get).mockResolvedValue({});
+      (chrome.storage.local.get as ReturnType<typeof vi.fn>).mockResolvedValue({});
 
       const store = useAppStore();
       store.chromeApiAvailable = true;
@@ -105,7 +105,7 @@ describe('useAppStore', () => {
     });
 
     it('設定を保存して state を更新する', async () => {
-      vi.mocked(chrome.storage.local.set).mockResolvedValue(undefined);
+      (chrome.storage.local.set as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
       const store = useAppStore();
       store.chromeApiAvailable = true;
@@ -124,7 +124,7 @@ describe('useAppStore', () => {
     });
 
     it('一部の設定のみ更新できる', async () => {
-      vi.mocked(chrome.storage.local.set).mockResolvedValue(undefined);
+      (chrome.storage.local.set as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
       const store = useAppStore();
       store.chromeApiAvailable = true;
