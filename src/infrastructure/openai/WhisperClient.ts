@@ -1,0 +1,68 @@
+/**
+ * Whisper API クライアント
+ *
+ * OpenAI Whisper API を使用して音声をテキストに変換する
+ */
+
+import type { IWhisperRepository } from '@/domain/repositories/IWhisperRepository';
+import type { AudioChunk, WhisperResponse } from '@/shared/types';
+
+const WHISPER_API_URL = 'https://api.openai.com/v1/audio/transcriptions';
+const WHISPER_MODEL = 'whisper-1';
+
+export class WhisperClient implements IWhisperRepository {
+  private apiKey: string;
+
+  constructor(apiKey: string) {
+    this.apiKey = apiKey;
+  }
+
+  /**
+   * API キーを更新
+   */
+  setApiKey(apiKey: string): void {
+    this.apiKey = apiKey;
+  }
+
+  /**
+   * 音声チャンクを文字起こし
+   */
+  async transcribe(audioChunk: AudioChunk): Promise<WhisperResponse> {
+    if (!this.apiKey) {
+      throw new Error('OpenAI API key is not set');
+    }
+
+    // FormData を作成
+    const formData = new FormData();
+
+    // Blob を File に変換（Whisper API は拡張子が必要）
+    const file = new File([audioChunk.data], 'audio.webm', {
+      type: audioChunk.data.type || 'audio/webm',
+    });
+
+    formData.append('file', file);
+    formData.append('model', WHISPER_MODEL);
+    formData.append('language', 'ja'); // 日本語を優先（自動検出も可能）
+    formData.append('response_format', 'json');
+
+    // API リクエスト
+    const response = await fetch(WHISPER_API_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Whisper API error: ${response.status} - ${errorText}`);
+    }
+
+    const result = await response.json();
+
+    return {
+      text: result.text || '',
+    };
+  }
+}
