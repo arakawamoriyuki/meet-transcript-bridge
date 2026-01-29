@@ -315,8 +315,9 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
 - [ ] 音声 → テキスト変換の動作確認
 
 ### Phase 7: バッファリング
-- [ ] バッファリング・文章完成判定ロジック
-- [ ] バッファ管理の実装
+- [x] TranscriptBufferManager 実装（`src/application/usecases/`）
+- [x] Background でバッファマネージャを統合
+- [x] テスト追加（13 個 - 累計 55 個）
 
 ### Phase 8: GPT + Slack
 - [ ] GPT API クライアント（翻訳・要約）
