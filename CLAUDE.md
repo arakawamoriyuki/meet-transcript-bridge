@@ -314,8 +314,8 @@ OpenAI API キー1つで Whisper（文字起こし）と GPT（翻訳・要約�
 - [ ] AudioChunk が正しく生成されることを確認
 
 #### Phase 6: Whisper 連携
-- [ ] Whisper API クライアント実装（`src/infrastructure/openai/`）
-- [ ] Background で AudioChunk を受け取り Whisper に送信
+- [x] Whisper API クライアント実装（`src/infrastructure/openai/WhisperClient.ts`）
+- [x] Background で AudioChunk を受け取り Whisper に送信
 - [ ] 音声 → テキスト変換の動作確認
 
 #### Phase 7: バッファリング
