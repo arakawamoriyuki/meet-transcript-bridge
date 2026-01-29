@@ -57,6 +57,20 @@ export const useAppStore = defineStore('app', () => {
     slackWebhookUrl.value = null;
   }
 
+  async function resetAllSettings() {
+    if (!chromeApiAvailable.value) {
+      throw new Error('Chrome API is not available');
+    }
+
+    try {
+      await chrome.storage.local.clear();
+      clearSettings();
+    } catch (error) {
+      console.error('Failed to reset settings:', error);
+      throw error;
+    }
+  }
+
   return {
     // State
     version,
@@ -69,5 +83,6 @@ export const useAppStore = defineStore('app', () => {
     loadSettings,
     saveSettings,
     clearSettings,
+    resetAllSettings,
   };
 });

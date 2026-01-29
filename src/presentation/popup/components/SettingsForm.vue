@@ -51,6 +51,20 @@
         {{ isSaving ? '保存中...' : '保存' }}
       </button>
     </form>
+
+    <!-- Reset Section -->
+    <div class="mt-6 pt-4 border-t border-white/20">
+      <button
+        @click="handleReset"
+        :disabled="isResetting"
+        class="w-full py-2 px-4 bg-red-500/20 text-red-200 font-medium rounded hover:bg-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {{ isResetting ? 'リセット中...' : '全設定をリセット' }}
+      </button>
+      <p class="text-xs opacity-60 mt-2 text-center">
+        すべての設定を削除します
+      </p>
+    </div>
   </div>
 </template>
 
@@ -71,6 +85,7 @@ const errors = reactive({
 });
 
 const isSaving = ref(false);
+const isResetting = ref(false);
 const successMessage = ref('');
 const errorMessage = ref('');
 
@@ -138,6 +153,32 @@ async function handleSubmit() {
     errorMessage.value = '設定の保存に失敗しました';
   } finally {
     isSaving.value = false;
+  }
+}
+
+async function handleReset() {
+  if (!confirm('すべての設定を削除しますか？')) {
+    return;
+  }
+
+  isResetting.value = true;
+  successMessage.value = '';
+  errorMessage.value = '';
+
+  try {
+    await appStore.resetAllSettings();
+    formData.openaiApiKey = '';
+    formData.slackWebhookUrl = '';
+    successMessage.value = '設定をリセットしました';
+
+    setTimeout(() => {
+      successMessage.value = '';
+    }, 3000);
+  } catch (error) {
+    console.error('Failed to reset settings:', error);
+    errorMessage.value = '設定のリセットに失敗しました';
+  } finally {
+    isResetting.value = false;
   }
 }
 </script>
