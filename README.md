@@ -14,35 +14,41 @@ This Chrome extension captures audio from browser tabs and provides:
 
 ## Processing Flow
 
-1. **Audio Capture**: Capture audio from active tab in chunks (e.g., every 10 seconds)
+1. **Audio Capture**: Capture tab audio (others' voice) and mic audio (your voice), mix them using Web Audio API, process in chunks (e.g., every 10 seconds)
 2. **Transcription**: Send each chunk to OpenAI Whisper API for text conversion
 3. **Buffering**: Hold incomplete sentences in buffer when chunk boundaries cut mid-sentence
 4. **Post on Completion**: Post to Slack in real-time when a complete sentence is formed
 5. **Translation/Summarization (optional)**: Process with GPT before posting
 
 ```
-      Chrome Extension                        External API
-    ─────────────────                    ─────────────────
+        Chrome Extension                      External API
+    ──────────────────────────────        ─────────────────
 
-    ┌───────────────┐                    ┌───────────────┐
-    │  Tab Audio    │───────────────────▶│   Whisper     │
-    │ (10sec chunks)│                    │ (Transcribe)  │
-    └───────────────┘                    └───────────────┘
+    ┌─────────────┬───────────────┐
+    │  Tab Audio  │   Mic Audio   │
+    │(others' voice)│ (your voice) │
+    └──────┬──────┴───────┬───────┘
+           │              │
+           ▼              ▼
+    ┌─────────────────────────────┐       ┌───────────────┐
+    │        Audio Mixer          │──────▶│   Whisper     │
+    │       (10sec chunks)        │       │ (Transcribe)  │
+    └─────────────────────────────┘       └───────────────┘
                                                  │
-           ┌─────────────────────────────────────┘
-           ▼
-    ┌───────────────┐                    ┌───────────────┐
-    │    Buffer     │───────────────────▶│     GPT       │
-    │  (Sentence    │                    │  (Translate/  │
-    │  Completion)  │                    │   Summarize)  │
-    └───────────────┘                    └───────────────┘
+                ┌────────────────────────────────┘
+                ▼
+    ┌─────────────────────────────┐       ┌───────────────┐
+    │          Buffer             │──────▶│     GPT       │
+    │    (Sentence Completion)    │       │  (Translate/  │
+    │                             │       │   Summarize)  │
+    └─────────────────────────────┘       └───────────────┘
                                                  │
-           ┌─────────────────────────────────────┘
-           ▼
-    ┌───────────────┐                    ┌───────────────┐
-    │  Slack Client │───────────────────▶│    Slack      │
-    │  (Notify)     │                    │   Webhook     │
-    └───────────────┘                    └───────────────┘
+                ┌────────────────────────────────┘
+                ▼
+    ┌─────────────────────────────┐       ┌───────────────┐
+    │        Slack Client         │──────▶│    Slack      │
+    │          (Notify)           │       │   Webhook     │
+    └─────────────────────────────┘       └───────────────┘
 ```
 
 ## Installation
