@@ -1,44 +1,48 @@
-# meet-transcript-bridge
+# stream-transcript-bridge
 
 [English](./README.md) | [日本語](./README.ja.md)
 
-A Chrome Extension that transcribes Google Meet audio in real-time and posts to Slack.
+A Chrome Extension that transcribes tab audio (YouTube, Google Meet, etc.) in real-time and posts to Slack.
 
 ## Overview
 
-This Chrome extension captures audio from Google Meet meetings and provides:
+This Chrome extension captures audio from browser tabs and provides:
 
 - **Real-time transcription**: Speech recognition via OpenAI Whisper API
 - **AI-powered translation/summarization**: Processing via GPT
-- **Slack integration**: Share meeting content to Slack in real-time
+- **Slack integration**: Share content to Slack in real-time
 
 ## Processing Flow
 
-1. **Audio Capture**: Capture audio from Google Meet tab in chunks (e.g., every 10 seconds)
+1. **Audio Capture**: Capture audio from active tab in chunks (e.g., every 10 seconds)
 2. **Transcription**: Send each chunk to OpenAI Whisper API for text conversion
 3. **Buffering**: Hold incomplete sentences in buffer when chunk boundaries cut mid-sentence
 4. **Post on Completion**: Post to Slack in real-time when a complete sentence is formed
 5. **Translation/Summarization (optional)**: Process with GPT before posting
 
 ```
-┌─────────────────┐     ┌──────────────┐     ┌─────────────┐
-│  Google Meet    │────▶│   Chrome     │────▶│  OpenAI     │
-│  (Tab Audio)    │     │   Extension  │     │  Whisper    │
-│                 │  10sec chunks      │     │             │
-└─────────────────┘     └──────────────┘     └─────────────┘
-                                                    │
-                              ┌─────────────────────┘
-                              ▼
-                        ┌───────────┐
-                        │  Buffer   │ ◀── Holds incomplete sentences
-                        └───────────┘
-                              │
-                              ▼ (when sentence is complete)
-┌─────────────────┐     ┌──────────────┐
-│     Slack       │◀────│   GPT        │
-│    Webhook      │     │  Translate/  │
-│                 │     │  Summarize   │
-└─────────────────┘     └──────────────┘
+      Chrome Extension                        External API
+    ─────────────────                    ─────────────────
+
+    ┌───────────────┐                    ┌───────────────┐
+    │  Tab Audio    │───────────────────▶│   Whisper     │
+    │ (10sec chunks)│                    │ (Transcribe)  │
+    └───────────────┘                    └───────────────┘
+                                                 │
+           ┌─────────────────────────────────────┘
+           ▼
+    ┌───────────────┐                    ┌───────────────┐
+    │    Buffer     │───────────────────▶│     GPT       │
+    │  (Sentence    │                    │  (Translate/  │
+    │  Completion)  │                    │   Summarize)  │
+    └───────────────┘                    └───────────────┘
+                                                 │
+           ┌─────────────────────────────────────┘
+           ▼
+    ┌───────────────┐                    ┌───────────────┐
+    │  Slack Client │───────────────────▶│    Slack      │
+    │  (Notify)     │                    │   Webhook     │
+    └───────────────┘                    └───────────────┘
 ```
 
 ## Installation

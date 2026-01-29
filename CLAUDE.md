@@ -15,7 +15,7 @@
 ## アーキテクチャ
 
 ```
-      Chrome Extension                        外部 API
+      Chrome Extension                        External API
     ─────────────────                    ─────────────────
 
     ┌───────────────┐                    ┌───────────────┐
